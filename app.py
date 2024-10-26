@@ -36,7 +36,7 @@ app.layout = dbc.Container([
             options=[{"label": bairro, "value": bairro} for bairro in data["bairro"].unique()],
             placeholder="Selecione o bairro",
             clearable=True,
-            style={"height": "50px", "lineHeight": "50px"}
+            style={"height": "50px", "lineHeight": "50px", "color": "#000", "backgroundColor": "#fff"}  # Cor do texto e fundo
         ), width=3),
 
         dbc.Col(dcc.Dropdown(
@@ -44,7 +44,7 @@ app.layout = dbc.Container([
             options=[{"label": atividade, "value": atividade} for atividade in data["atividade"].unique()],
             placeholder="Selecione a atividade",
             clearable=True,
-            style={"height": "50px", "lineHeight": "50px"}
+            style={"height": "50px", "lineHeight": "50px", "color": "#000", "backgroundColor": "#fff"}  # Cor do texto e fundo
         ), width=3)
     ], className="mb-3"),
     
