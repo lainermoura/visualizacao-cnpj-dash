@@ -2,16 +2,20 @@ import dash
 from dash import dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
-
-# Dados de exemplo
-data = pd.DataFrame({
-    'CNPJ': ['12345678000101', '98765432000102', '45612378000103', '12312378000104'],
-    'Bairro': ['Centro', 'Zona Sul', 'Zona Norte', 'Fátima'],
-    'Atividade': ['Comércio', 'Indústria', 'Serviços', 'Tecnologia']
-})
+import sqlite3
 
 # Inicializando o app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+
+# Função para carregar dados do banco de dados
+def load_data():
+    conn = sqlite3.connect('empresas_niteroi.db')
+    data = pd.read_sql_query('SELECT * FROM empresas', conn)
+    conn.close()
+    return data
+
+# Carregando os dados do banco de dados
+data = load_data()
 
 # Layout do aplicativo
 app.layout = dbc.Container([
@@ -25,11 +29,11 @@ app.layout = dbc.Container([
     html.H2("Busca Dinâmica de Empresas", className="mt-3"),
     
     dbc.Row([
-        dbc.Col(dcc.Input(id="cnpj-input", placeholder="Digite o CNPJ", type="text", style={"height": "50px"}), width=2),
+        dbc.Col(dcc.Input(id="cnpj-input", placeholder="Digite o CNPJ", type="text", style={"height": "50px"}), width=3),
         
         dbc.Col(dcc.Dropdown(
             id="bairro-input",
-            options=[{"label": bairro, "value": bairro} for bairro in data["Bairro"].unique()],
+            options=[{"label": bairro, "value": bairro} for bairro in data["bairro"].unique()],
             placeholder="Selecione o bairro",
             clearable=True,
             style={"height": "50px", "lineHeight": "50px"}
@@ -37,7 +41,7 @@ app.layout = dbc.Container([
 
         dbc.Col(dcc.Dropdown(
             id="atividade-input",
-            options=[{"label": atividade, "value": atividade} for atividade in data["Atividade"].unique()],
+            options=[{"label": atividade, "value": atividade} for atividade in data["atividade"].unique()],
             placeholder="Selecione a atividade",
             clearable=True,
             style={"height": "50px", "lineHeight": "50px"}
@@ -60,11 +64,14 @@ app.layout = dbc.Container([
      Input("atividade-input", "value")]
 )
 def update_results(cnpj, bairro, atividade):
+    # Carregar os dados novamente para garantir que estamos sempre com dados atualizados
+    data = load_data()
+
     # Filtra os dados com base nos valores de entrada
     filtered_data = data[
-        data["CNPJ"].str.contains(cnpj or "", case=False, na=False) &
-        data["Bairro"].str.contains(bairro or "", case=False, na=False) &
-        data["Atividade"].str.contains(atividade or "", case=False, na=False)
+        data["cnpj"].str.contains(cnpj or "", case=False, na=False) &
+        data["bairro"].str.contains(bairro or "", case=False, na=False) &
+        data["atividade"].str.contains(atividade or "", case=False, na=False)
     ]
 
     # Cria a mensagem com base nos filtros aplicados
