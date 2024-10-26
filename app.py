@@ -33,7 +33,7 @@ app.layout = dbc.Container([
         
         dbc.Col(dcc.Dropdown(
             id="bairro-input",
-            options=[{"label": bairro, "value": bairro} for bairro in data["bairro"].unique()],
+            options=[{"label": bairro, "value": bairro} for bairro in sorted(data["bairro"].unique())],
             placeholder="Selecione o bairro",
             clearable=True,
             style={"height": "50px", "lineHeight": "50px", "color": "#000", "backgroundColor": "#fff"}  # Cor do texto e fundo
@@ -41,7 +41,7 @@ app.layout = dbc.Container([
 
         dbc.Col(dcc.Dropdown(
             id="atividade-input",
-            options=[{"label": atividade, "value": atividade} for atividade in data["atividade"].unique()],
+            options=[{"label": atividade, "value": atividade} for atividade in sorted(data["atividade"].unique())],
             placeholder="Selecione a atividade",
             clearable=True,
             style={"height": "50px", "lineHeight": "50px", "color": "#000", "backgroundColor": "#fff"}  # Cor do texto e fundo
@@ -58,10 +58,10 @@ app.layout = dbc.Container([
 # Callback para atualizar a tabela de resultados e a contagem
 @app.callback(
     [Output("results-table", "children"),
-     Output("results-count", "children")],
+    Output("results-count", "children")],
     [Input("cnpj-input", "value"),
-     Input("bairro-input", "value"),
-     Input("atividade-input", "value")]
+    Input("bairro-input", "value"),
+    Input("atividade-input", "value")]
 )
 def update_results(cnpj, bairro, atividade):
     # Carregar os dados novamente para garantir que estamos sempre com dados atualizados
